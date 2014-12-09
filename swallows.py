@@ -8,6 +8,7 @@ import copy
 structures = {}
 graph = {}
 visited = {}
+min = {}
 
 def init_structures():
   structures['min'] = {}
@@ -23,6 +24,31 @@ def next_static_path(v):
   w = static_paths[0]
   cost = (w-v)*structures['cost_unit']
   return [v,w,cost,'static']
+
+def compute_minimum():
+  global min
+  vertices = graph.keys()
+  vertices.sort()
+  min[0] = 0
+  for s in vertices:
+    edges = graph[s]
+    print s
+    print min
+    print "---"
+
+    cost_s = min[s]
+    for edge in edges:
+      if edge == None:
+        continue
+
+      t = edge[1]
+      w = edge[2]
+      # print t
+
+      cost_t = cost_s + w
+      min[t] = (min.get(t) or float("inf"))
+      if cost_t < min[t]:
+        min[t] = cost_t
 
 def init_graph(s):
   global graph
@@ -51,7 +77,8 @@ def main(filename):
 
   init_graph(0)
 
-  print graph
+  compute_minimum()
+  print min
 
 
 
