@@ -26,7 +26,12 @@ def next_static_path(v):
 
 def init_graph(s):
   global graph
-  keys = [0] + structures['keys']
+
+  keys = structures['keys']
+  keys.sort()
+  if keys[0] != s:
+    keys = [s] + structures['keys']
+
   for key in keys:
     static_path = next_static_path(key)
     graph[key] = graph.get(key) or []
