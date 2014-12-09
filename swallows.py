@@ -3,14 +3,18 @@
 import sys
 import numpy
 
-def main(filename):
-  cost_unit,flight_paths = index_flight_paths(filename)
-  print cost_unit
-  print flight_paths
-  # cost_per_mile = content[0]
-  # flight_paths = content[1:]
+def init_structures(structures):
+  structures['paths'] = {}
+  structures['start'] = 0
 
-  #index flight paths
+def main(filename):
+  structures = {}
+  init_structures(structures)
+  cost_unit,flight_paths,end = index_flight_paths(filename)
+  structures['end'] = end
+  structures['cost_unit'] = cost_unit
+  structures['flight_paths'] = flight_paths
+  print structures
 
 
 def index_flight_paths(filename):
@@ -18,14 +22,14 @@ def index_flight_paths(filename):
   cost_str = fh.readline()
   cost_unit = int(cost_str)
   flight_paths = {}
+  end = 0
   for line in fh:
     s,t,cost = normalize_path_data(line)
     flight_paths[s] = (flight_paths.get(s) or [s,t,cost])
-  return cost_unit,flight_paths
-
-
+    if t > end:
+      end = t
   fh.close()
-  return array
+  return cost_unit,flight_paths,end
 
 def normalize_path_data(line):
   # line.strip()
