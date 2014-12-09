@@ -10,10 +10,7 @@ def init_structures(structures):
 def main(filename):
   structures = {}
   init_structures(structures)
-  cost_unit,flight_paths,end = index_flight_paths(filename)
-  structures['end'] = end
-  structures['cost_unit'] = cost_unit
-  structures['flight_paths'] = flight_paths
+  structures['cost_unit'],structures['flight_paths'],structures['end'] = index_flight_paths(filename)
   print structures
 
 
