@@ -2,8 +2,11 @@
 
 import sys
 import numpy
+import pdb
 
 structures = {}
+graph = {}
+visited = {}
 
 def init_structures():
   structures['min'] = {}
@@ -12,16 +15,52 @@ def init_structures():
   structures['path'] = {}
   structures['path'][0] = []
 
-# def calculate_min(start,structures):
-#   min_cost = float('inf')
+def next_static_path(v):
+  static_paths = [x for x in structures['starts'] if x >= v]
+  if len(static_paths) == 0:
+    return None
+  w = static_paths[0]
+  cost = (w-v)*structures['cost_unit']
+  return [v,w,cost,'static']
 
+def init_graph(vertex):
+  if vertex == None:
+    return
+  if visited.get(vertex):
+    return
 
+  visited[vertex] = True
+
+  flight_paths = structures['flight_paths']
+  flight_path = flight_paths.get(vertex)
+
+  static_path = next_static_path(vertex)
+
+  print static_path
+
+  graph[vertex] = (graph.get(vertex) or [])
+
+  if (static_path==None) and (flight_path==None):
+    return
+
+  if static_path:
+    graph[vertex].append(static_path)
+  if flight_path:
+    graph[vertex].append(flight_path)
+
+  if static_path:
+    init_graph(static_path[1])
+  if flight_path:
+    init_graph(flight_path[1])
 
 def main(filename):
   init_structures()
   structures['cost_unit'],structures['flight_paths'],structures['end'] = index_flight_paths(filename)
-  flight_paths = structures['flight_paths']
-  print structures
+  starts = structures['flight_paths'].keys()
+  starts.sort()
+  structures['starts'] = starts
+  init_graph(0)
+  print graph
 
 
 
