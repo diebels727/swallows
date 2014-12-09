@@ -4,13 +4,21 @@ import sys
 import numpy
 
 def init_structures(structures):
-  structures['paths'] = {}
+  structures['min'] = {}
   structures['start'] = 0
+  structures['visited'] = [0]
+  structures['path'] = {}
+  structures['path'][0] = []
+
+# def calculate_min(start,structures):
+#   min_cost = float('inf')
+
 
 def main(filename):
   structures = {}
   init_structures(structures)
   structures['cost_unit'],structures['flight_paths'],structures['end'] = index_flight_paths(filename)
+
   print structures
 
 
