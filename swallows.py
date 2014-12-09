@@ -3,7 +3,9 @@
 import sys
 import numpy
 
-def init_structures(structures):
+structures = {}
+
+def init_structures():
   structures['min'] = {}
   structures['start'] = 0
   structures['visited'] = [0]
@@ -14,12 +16,13 @@ def init_structures(structures):
 #   min_cost = float('inf')
 
 
-def main(filename):
-  structures = {}
-  init_structures(structures)
-  structures['cost_unit'],structures['flight_paths'],structures['end'] = index_flight_paths(filename)
 
+def main(filename):
+  init_structures()
+  structures['cost_unit'],structures['flight_paths'],structures['end'] = index_flight_paths(filename)
+  flight_paths = structures['flight_paths']
   print structures
+
 
 
 def index_flight_paths(filename):
@@ -29,8 +32,8 @@ def index_flight_paths(filename):
   flight_paths = {}
   end = 0
   for line in fh:
-    s,t,cost = normalize_path_data(line)
-    flight_paths[s] = (flight_paths.get(s) or [s,t,cost])
+    s,t,cost,path_type = normalize_path_data(line)
+    flight_paths[s] = (flight_paths.get(s) or [s,t,cost,path_type])
     if t > end:
       end = t
   fh.close()
@@ -42,7 +45,7 @@ def normalize_path_data(line):
   s = int(tuples[0])
   t = int(tuples[1])
   cost = int(tuples[2])
-  return s,t,cost
+  return s,t,cost,'jet'
 
 if __name__ == "__main__":
   main(sys.argv[1])
