@@ -3,6 +3,7 @@
 import sys
 import flight_paths as fp
 import graph as g
+import copy
 
 class OptimalPath:
   def __init__(self,flight_path):
@@ -19,10 +20,6 @@ class OptimalPath:
     self.cost[start] = 0
     while self.visited != self.vertices:
       min_edge,min_cost = self.determine_min_edge()
-      self.cost[min_edge.t] = min_cost
-      last_min_path = self.path.get(min_edge.s) or []
-      last_min_path.append(min_edge)
-      self.path[min_edge.t] = last_min_path
       self.visited.add(min_edge.t)
 
   # Determine edges with tail in optimal set and head in the frontier
@@ -37,6 +34,11 @@ class OptimalPath:
       if current_cost < cost:
         cost = current_cost
         candidate = current_candidate
+    path_to_s = self.path.get(candidate.s) or []
+    path = copy.copy(path_to_s)
+    path.append(candidate)
+    self.cost[candidate.t] = cost
+    self.path[candidate.t] = path
     return candidate,cost
 
   def path_as_flight_path_tuples(self,vertex):
@@ -50,6 +52,8 @@ def main(filename):
   flight_path.link_jetstreams()
   optimal_path = OptimalPath(flight_path)
   optimal_path.calculate(flight_path.start)
+
+  print optimal_path.path[flight_path.end]
 
   print "Optimal Jetstream Sequence:"
   print optimal_path.path_as_flight_path_tuples(flight_path.end)
