@@ -5,7 +5,7 @@ class Edge:
     self.w = w
     self.type = et
 
-  def is_null():
+  def is_null(self):
     return False
 
 class NullEdge:
@@ -15,5 +15,5 @@ class NullEdge:
     self.w = None
     self.type = None
 
-  def is_null():
+  def is_null(self):
     return True

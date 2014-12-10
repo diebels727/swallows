@@ -19,7 +19,9 @@ class Graph:
     self.edges.append(edge)
 
   def V(self):
-    return self.graph.keys().sort()
+    keys = self.graph.keys()
+    keys.sort()
+    return keys
 
   def E(self):
     return self.edges
@@ -82,10 +84,10 @@ class FlightPath:
   #
   def prev_jetstream_edge(self,s,keys):
     paths = [x for x in keys if x < s]
-    if len(static_paths) == 0:
+    if len(paths) == 0:
       return e.NullEdge()
-    t = path[len(paths)-1]
-    cost = abs(w-s)*self.unit_path_cost
+    t = paths[len(paths)-1]
+    cost = abs(t-s)*self.unit_path_cost
     edge = e.Edge(s,t,cost,'non-js')
     return edge
 
@@ -100,10 +102,11 @@ class FlightPath:
 
 def main(filename):
   graph = Graph()
-  flight_path = FlightPath(0,filename)
+  start_vertex = 0
+  flight_path = FlightPath(start_vertex,filename)
   flight_path.build(graph)
-  print "foo"
-  print graph.V()
+  flight_path.link_jetstreams()
+  print graph.E()
 
 
 if __name__ == "__main__":
