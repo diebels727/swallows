@@ -7,8 +7,10 @@ import sys
 
 structures = {}
 graph = {}
-visited = {}
+visited = set([])
+vertices = set([])
 min = {}
+keys = []
 
 def init_structures():
   structures['min'] = {}
@@ -18,7 +20,7 @@ def init_structures():
   structures['path'][0] = []
 
 def next_static_path(v):
-  static_paths = [x for x in structures['keys'] if x > v]
+  static_paths = [x for x in keys if x > v]
   if len(static_paths) == 0:
     return None
   w = static_paths[0]
@@ -26,7 +28,7 @@ def next_static_path(v):
   return [v,w,cost,'static']
 
 def prev_static_path(v):
-  static_paths = [x for x in structures['keys'] if x < v]
+  static_paths = [x for x in keys if x < v]
   if len(static_paths) == 0:
     return None
   w = static_paths[len(static_paths)-1]
@@ -44,56 +46,33 @@ def init_min():
 
 def compute_minimum():
   global min
-  vertices = graph.keys()
-  vertices.sort()
 
-  for s in vertices:
-    edges = graph[s]
-    cost_s = min[s]
-    for edge in edges:
-      print edge
-      print min
-
-      if edge == None:
-        continue
-      t = edge[1]
-      w = edge[2]
-      cost_t = cost_s + w
-
-      # min[t] = (min.get(t) or float("inf"))
-      if cost_t < min[t]:
-        min[t] = cost_t
 
 def init_graph(s):
   global graph
-
-  keys = structures['keys']
+  global keys
+  keys = graph.keys()
   keys.sort()
   if keys[0] != s:
-    keys = [s] + structures['keys']
-
+    keys = [s] + keys
   for key in keys:
     next_path = next_static_path(key)
     prev_path = prev_static_path(key)
     graph[key] = graph.get(key) or []
     graph[key].append(next_path)
     graph[key].append(prev_path)
+  print keys
 
 def main(filename):
   init_structures()
   structures['cost_unit'],structures['flight_paths'],structures['end'] = index_flight_paths(filename)
-  starts = structures['flight_paths'].keys()
-  starts.sort()
-  structures['starts'] = starts
-
-  keys = graph.keys()
-  keys.sort()
-  structures['keys'] = keys
 
   init_graph(0)
-
-  print graph
   init_min()
+
+  global vertices
+  vertices = set(vertices)
+
   compute_minimum()
   print min
 
