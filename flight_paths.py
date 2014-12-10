@@ -35,6 +35,7 @@ class FlightPath:
         self.graph.add_edge(next_edge)
       if not (prev_edge.is_null()):
         self.graph.add_edge(prev_edge)
+    return self.graph
 
   # Used to locate the next jetstream given a vertex, and ultimately
   # for connecting the flight path graph
