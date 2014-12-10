@@ -21,6 +21,12 @@ def test_trivial():
   cost,path = setup_flight_path(trivial)
   assert cost == 1
 
+def test_over_weight():
+  weight = """10
+  0 1 100"""
+  cost,path = setup_flight_path(weight)
+  assert cost == 10
+
 def test_sample():
   sample = """50
   0 5 10
@@ -42,6 +48,13 @@ def test_backtrack():
   assert cost == 12
   assert path == ['03','25']
 
+def test_rainbow():
+  rainbow = """50
+  1 6 14
+  3 4 2"""
+  cost,path = setup_flight_path(rainbow)
+  assert cost == 64
+  assert path == ['16']
 
 
 
