@@ -24,6 +24,18 @@ class FlightPath:
         self.end = edge.t
     fh.close()
 
+  def build_from_string(self,graph,string):
+    self.graph = graph
+    lines = string.splitlines()
+    cost_str = lines[0]
+    lines = lines[1:]
+    self.unit_path_cost = int(cost_str)
+    for line in lines:
+      edge = self.line_to_edge(line)
+      self.graph.add_edge(edge)
+      if edge.t > self.end:
+        self.end = edge.t
+
   def link_jetstreams(self):
     vertices = self.graph.V()
     if vertices[0] != self.start:
