@@ -2,55 +2,83 @@
 
 import sys
 # import numpy
-# import pdb
+import pdb
 # import copy
 
-structures = {}
+cost_unit = None
+flight_paths = {}
+end = None
 graph = {}
+edges = []
 visited = set([])
 vertices = set([])
 min = {}
 keys = []
-
-def init_structures():
-  structures['min'] = {}
-  structures['start'] = 0
-  structures['visited'] = [0]
-  structures['path'] = {}
-  structures['path'][0] = []
+frontier = set([])
 
 def next_static_path(v):
+  global cost_unit
   static_paths = [x for x in keys if x > v]
   if len(static_paths) == 0:
     return None
   w = static_paths[0]
-  cost = (w-v)*structures['cost_unit']
+  cost = (w-v)*cost_unit
   return [v,w,cost,'static']
 
 def prev_static_path(v):
+  global cost_unit
   static_paths = [x for x in keys if x < v]
   if len(static_paths) == 0:
     return None
   w = static_paths[len(static_paths)-1]
-  cost = abs(w-v)*structures['cost_unit']
+  cost = abs(w-v)*cost_unit
   return [v,w,cost,'static']
 
-
-def init_min():
+def init_min(s):
   global min
   vertices = graph.keys()
   vertices.sort()
   for v in vertices:
     min[v] = float("inf")
-  min[0] = 0
+  min[s] = 0
 
-def compute_minimum():
+def compute_minimum(s):
   global min
+  global frontier
+  global visited
+  visited.add(s)
+  min[s] = 0
 
+  while visited != vertices:
+    frontier = vertices - visited
+    candidate,cost = calculate_min()
+    t = candidate[1]
+    print "calculated candidate: ",candidate
+    visited.add(t)
+
+def calculate_min():
+  global min
+  min_candidate = None
+  min_cost = float("inf")
+
+  for edge in candidate_edges():
+    s = edge[0]
+    t = edge[1]
+    w = edge[2]
+    current_cost = min[s] + w
+    if current_cost <= min_cost:
+      min_cost = current_cost
+      min[t] = current_cost
+      min_candidate = edge
+  return min_candidate,min_cost
+
+def candidate_edges():
+  return [edge for edge in edges if (edge[0] in visited) and not (edge[1] in visited)]
 
 def init_graph(s):
   global graph
   global keys
+  global edges
   keys = graph.keys()
   keys.sort()
   if keys[0] != s:
@@ -59,21 +87,34 @@ def init_graph(s):
     next_path = next_static_path(key)
     prev_path = prev_static_path(key)
     graph[key] = graph.get(key) or []
-    graph[key].append(next_path)
-    graph[key].append(prev_path)
-  print keys
+    if next_path != None:
+      graph[key].append(next_path)
+      edges.append(next_path)
+    if prev_path != None:
+      graph[key].append(prev_path)
+      edges.append(prev_path)
+
+def init_vertices():
+  global vertices
+  vertices = set(graph.keys())
+
+def init_visited():
+  global visited
+  visited = set([])
 
 def main(filename):
-  init_structures()
-  structures['cost_unit'],structures['flight_paths'],structures['end'] = index_flight_paths(filename)
+  global cost_unit
+  global flight_paths
+  global end
+  cost_unit,flight_paths,end = index_flight_paths(filename)
 
   init_graph(0)
-  init_min()
+  init_min(0)
+  init_vertices()
+  init_visited()
 
-  global vertices
-  vertices = set(vertices)
+  compute_minimum(0)
 
-  compute_minimum()
   print min
 
 
@@ -90,6 +131,7 @@ def index_flight_paths(filename):
     flight_paths[s].append([s,t,cost,path_type])
     graph[s] = (graph.get(s) or [])
     graph[s].append([s,t,cost,path_type])
+    edges.append([s,t,cost,path_type])
     graph[t] = (graph.get(t) or [])
     if t > end:
       end = t
@@ -97,7 +139,6 @@ def index_flight_paths(filename):
   return cost_unit,flight_paths,end
 
 def normalize_path_data(line):
-  # line.strip()
   tuples = line.split()
   s = int(tuples[0])
   t = int(tuples[1])
