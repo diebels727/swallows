@@ -25,22 +25,42 @@ def next_static_path(v):
   cost = (w-v)*structures['cost_unit']
   return [v,w,cost,'static']
 
+def prev_static_path(v):
+  static_paths = [x for x in structures['keys'] if x < v]
+  if len(static_paths) == 0:
+    return None
+  w = static_paths[len(static_paths)-1]
+  cost = abs(w-v)*structures['cost_unit']
+  return [v,w,cost,'static']
+
+
+def init_min():
+  global min
+  vertices = graph.keys()
+  vertices.sort()
+  for v in vertices:
+    min[v] = float("inf")
+  min[0] = 0
+
 def compute_minimum():
   global min
   vertices = graph.keys()
   vertices.sort()
-  min[0] = 0
+
   for s in vertices:
     edges = graph[s]
     cost_s = min[s]
     for edge in edges:
+      print edge
+      print min
+
       if edge == None:
         continue
-
       t = edge[1]
       w = edge[2]
       cost_t = cost_s + w
-      min[t] = (min.get(t) or float("inf"))
+
+      # min[t] = (min.get(t) or float("inf"))
       if cost_t < min[t]:
         min[t] = cost_t
 
@@ -53,10 +73,11 @@ def init_graph(s):
     keys = [s] + structures['keys']
 
   for key in keys:
-    static_path = next_static_path(key)
+    next_path = next_static_path(key)
+    prev_path = prev_static_path(key)
     graph[key] = graph.get(key) or []
-    graph[key].append(static_path)
-    # graph[key] = (graph.get(key) or []).append(static_path)
+    graph[key].append(next_path)
+    graph[key].append(prev_path)
 
 def main(filename):
   init_structures()
@@ -71,6 +92,8 @@ def main(filename):
 
   init_graph(0)
 
+  print graph
+  init_min()
   compute_minimum()
   print min
 
