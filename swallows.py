@@ -9,15 +9,14 @@ class OptimalPath:
     self.graph = flight_path.graph
     self.visited = set([])
     self.vertices = set(self.graph.V())
-    self.min = {}
-    self.frontier = set([])
+    self.cost = {}
 
     for v in self.graph.V():
-      self.min[v] = float("inf")
+      self.cost[v] = float("inf")
 
   def calculate(self,start):
     self.visited.add(start)
-    self.min[start] = 0
+    self.cost[start] = 0
     while self.visited != self.vertices:
       min_edge,min_cost = self.determine_min_edge()
       self.visited.add(min_edge.t)
@@ -30,10 +29,10 @@ class OptimalPath:
     candidate = None
     cost = float("inf")
     for current_candidate in self.candidates():
-      current_cost = self.min[current_candidate.s] + current_candidate.w
+      current_cost = self.cost[current_candidate.s] + current_candidate.w
       if current_cost < cost:
         cost = current_cost
-        self.min[current_candidate.t] = current_cost
+        self.cost[current_candidate.t] = current_cost
         candidate = current_candidate
     return candidate,cost
 
@@ -43,13 +42,9 @@ def main(filename):
   flight_path = fp.FlightPath(start_vertex,filename)
   flight_path.build(graph)
   flight_path.link_jetstreams()
-
   optimal_path = OptimalPath(flight_path)
   optimal_path.calculate(flight_path.start)
-  print optimal_path.min
-  # print graph.G()
-  # compute_minimum(0)
-  # print min[end]
+  print optimal_path.cost
 
 if __name__ == "__main__":
   main(sys.argv[1])
