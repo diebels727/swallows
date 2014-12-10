@@ -16,23 +16,52 @@ min = {}
 keys = []
 frontier = set([])
 
-def next_static_path(v):
-  global cost_unit
-  static_paths = [x for x in keys if x > v]
-  if len(static_paths) == 0:
-    return None
-  w = static_paths[0]
-  cost = (w-v)*cost_unit
-  return [v,w,cost,'static']
+class Edge:
+  def __init__(self,s,t,w,et):
+    self.s = s
+    self.t = s
+    self.w = w
+    self.type = et
 
-def prev_static_path(v):
-  global cost_unit
-  static_paths = [x for x in keys if x < v]
-  if len(static_paths) == 0:
-    return None
-  w = static_paths[len(static_paths)-1]
-  cost = abs(w-v)*cost_unit
-  return [v,w,cost,'static']
+class Graph:
+  def __init__(flight_paths,cost_unit):
+    self.g = {}
+    self.keys = []
+    self.edges = []
+    self.cost_unit = cost_unit
+
+  def link(s):
+    self.keys = self.g.keys()
+    self.keys.sort()
+    if self.keys[0] != s:
+      self.keys = [s] + self.keys
+    for key in self.keys:
+      next_path = next_static_path(key)
+      prev_path = prev_static_path(key)
+      self.g[key] = self.g.get(key) or []
+      if next_path != None:
+        self.g[key].append(next_path)
+        self.edges.append(next_path)
+      if prev_path != None:
+        self.g[key].append(prev_path)
+        self.edges.append(prev_path)
+
+  def next_static_path(v):
+    static_paths = [x for x in keys if x > v]
+    if len(static_paths) == 0:
+      return None
+    w = static_paths[0]
+    cost = (w-v)*self.cost_unit
+    return [v,w,cost,'static']
+
+  def prev_static_path(v):
+    global cost_unit
+    static_paths = [x for x in keys if x < v]
+    if len(static_paths) == 0:
+      return None
+    w = static_paths[len(static_paths)-1]
+    cost = abs(w-v)*self.cost_unit
+    return [v,w,cost,'static']
 
 def init_min(s):
   global min
@@ -74,25 +103,6 @@ def calculate_min():
 def candidate_edges():
   return [edge for edge in edges if (edge[0] in visited) and not (edge[1] in visited)]
 
-def init_graph(s):
-  global graph
-  global keys
-  global edges
-  keys = graph.keys()
-  keys.sort()
-  if keys[0] != s:
-    keys = [s] + keys
-  for key in keys:
-    next_path = next_static_path(key)
-    prev_path = prev_static_path(key)
-    graph[key] = graph.get(key) or []
-    if next_path != None:
-      graph[key].append(next_path)
-      edges.append(next_path)
-    if prev_path != None:
-      graph[key].append(prev_path)
-      edges.append(prev_path)
-
 def init_vertices():
   global vertices
   vertices = set(graph.keys())
@@ -105,17 +115,20 @@ def main(filename):
   global cost_unit
   global flight_paths
   global end
-  cost_unit,flight_paths,end = index_flight_paths(filename)
 
-  init_graph(0)
-  init_min(0)
-  init_vertices()
-  init_visited()
+  cost_unit,flight_paths,end = build_flight_paths(filename)
 
-  compute_minimum(0)
-  print min[end]
 
-def index_flight_paths(filename):
+  g = Graph()
+  # init_graph(0)
+  # init_min(0)
+  # init_vertices()
+  # init_visited()
+
+  # compute_minimum(0)
+  # print min[end]
+
+def build_flight_paths(filename):
   fh = open(filename, "r" )
   cost_str = fh.readline()
   cost_unit = int(cost_str)
