@@ -1,9 +1,9 @@
 #!/usr/bin/python
 
 import sys
-import numpy
-import pdb
-import copy
+# import numpy
+# import pdb
+# import copy
 
 structures = {}
 graph = {}
@@ -32,10 +32,6 @@ def compute_minimum():
   min[0] = 0
   for s in vertices:
     edges = graph[s]
-    print s
-    print min
-    print "---"
-
     cost_s = min[s]
     for edge in edges:
       if edge == None:
@@ -43,8 +39,6 @@ def compute_minimum():
 
       t = edge[1]
       w = edge[2]
-      # print t
-
       cost_t = cost_s + w
       min[t] = (min.get(t) or float("inf"))
       if cost_t < min[t]:
