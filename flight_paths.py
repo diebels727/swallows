@@ -2,38 +2,12 @@
 
 import sys
 import edge as e
-# import graph as g
-
-class Graph:
-  def __init__(self):
-    self.graph = {}
-    self.edges = []
-    self.vertices = []
-
-  def add_edge(self,edge):
-    s = edge.s
-    t = edge.t
-    self.graph[s] = (self.graph.get(s) or [])
-    self.graph[s].append(edge)
-    self.graph[t] = (self.graph.get(t) or [])
-    self.edges.append(edge)
-
-  def V(self):
-    keys = self.graph.keys()
-    keys.sort()
-    return keys
-
-  def E(self):
-    return self.edges
-
-  def G(self):
-    return self.graph
-
+import graph as g
 
 class FlightPath:
   def __init__(self,start,filename):
     self.filename = filename
-    self.graph = {}
+    self.graph = g.Graph()
     self.unit_path_cost = None
     self.end = 0
     self.start = start
@@ -102,7 +76,7 @@ class FlightPath:
     return edge
 
 def main(filename):
-  graph = Graph()
+  graph = g.Graph()
   start_vertex = 0
   flight_path = FlightPath(start_vertex,filename)
   flight_path.build(graph)
