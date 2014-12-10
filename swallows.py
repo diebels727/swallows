@@ -53,7 +53,6 @@ def compute_minimum(s):
     frontier = vertices - visited
     candidate,cost = calculate_min()
     t = candidate[1]
-    print "calculated candidate: ",candidate
     visited.add(t)
 
 def calculate_min():
@@ -114,10 +113,7 @@ def main(filename):
   init_visited()
 
   compute_minimum(0)
-
-  print min
-
-
+  print min[end]
 
 def index_flight_paths(filename):
   fh = open(filename, "r" )
