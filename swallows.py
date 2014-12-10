@@ -50,6 +50,7 @@ def main(filename):
   flight_path.link_jetstreams()
   optimal_path = OptimalPath(flight_path)
   optimal_path.calculate(flight_path.start)
+
   print "Optimal Jetstream Sequence:"
   print optimal_path.path_as_flight_path_tuples(flight_path.end)
   print "Minimum Cost:"
