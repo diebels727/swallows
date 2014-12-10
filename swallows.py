@@ -10,7 +10,7 @@ class OptimalPath:
     self.visited = set([])
     self.vertices = set(self.graph.V())
     self.cost = {}
-
+    self.path = {}
     for v in self.graph.V():
       self.cost[v] = float("inf")
 
@@ -19,6 +19,10 @@ class OptimalPath:
     self.cost[start] = 0
     while self.visited != self.vertices:
       min_edge,min_cost = self.determine_min_edge()
+      self.cost[min_edge.t] = min_cost
+      last_min_path = self.path.get(min_edge.s) or []
+      last_min_path.append(min_edge)
+      self.path[min_edge.t] = last_min_path
       self.visited.add(min_edge.t)
 
   # Determine edges with tail in optimal set and head in the frontier
@@ -32,9 +36,11 @@ class OptimalPath:
       current_cost = self.cost[current_candidate.s] + current_candidate.w
       if current_cost < cost:
         cost = current_cost
-        self.cost[current_candidate.t] = current_cost
         candidate = current_candidate
     return candidate,cost
+
+  def path_as_flight_path_tuples(self,vertex):
+    return ["(%d,%d)" % (edge.s,edge.t) for edge in self.path[vertex] if edge.type == 'jet']
 
 def main(filename):
   graph = g.Graph()
@@ -44,7 +50,10 @@ def main(filename):
   flight_path.link_jetstreams()
   optimal_path = OptimalPath(flight_path)
   optimal_path.calculate(flight_path.start)
-  print optimal_path.cost
+  print "Optimal Jetstream Sequence:"
+  print optimal_path.path_as_flight_path_tuples(flight_path.end)
+  print "Minimum Cost:"
+  print optimal_path.cost[flight_path.end]
 
 if __name__ == "__main__":
   main(sys.argv[1])
