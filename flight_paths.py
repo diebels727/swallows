@@ -107,7 +107,7 @@ def main(filename):
   flight_path = FlightPath(start_vertex,filename)
   flight_path.build(graph)
   flight_path.link_jetstreams()
-  print graph.E()
+  print graph.G()
 
 
 if __name__ == "__main__":
