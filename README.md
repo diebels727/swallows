@@ -1,6 +1,6 @@
 # Swallows.py
 
-This implementation runs in O(mn).
+This implementation runs in O(mn) and was written in Python 2.7.
 
 Run swallows.py and provide a flight path data file.
 
