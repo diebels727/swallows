@@ -27,6 +27,13 @@ def test_over_weight():
   cost,path = setup_flight_path(weight)
   assert cost == 10
 
+def test_under_weight():
+  weight = """0
+  0 1 100"""
+  cost,path = setup_flight_path(weight)
+  assert cost == 0
+  assert path == []
+
 def test_sample():
   sample = """50
   0 5 10
@@ -55,6 +62,16 @@ def test_rainbow():
   cost,path = setup_flight_path(rainbow)
   assert cost == 64
   assert path == ['16']
+
+def test_sequence():
+  rainbow = """1
+  0 1 1
+  1 2 1
+  2 3 1"""
+  cost,path = setup_flight_path(rainbow)
+  assert cost == 3
+  assert path == ['01','12','23']
+
 
 
 
