@@ -8,6 +8,12 @@ A flight path graph may look, as follows:
 
 Jetstreams are identified by segments 0-3 and 2-4.  The non-jetstream path 0-1-2-3-4 has a constant cost for flying between vertices -- in this case it is a cost of 10.
 
+This program reduces the graph above to the following digraph:
+
+![reduce] (https://github.com/diebels727/swallows/raw/graphic/reduce.png)
+
+As you can see, the edge 0-1-2 is collapsed in to an edge 0-2; this reduces the edge count in graphs where vertices are identified by large integers and have large gaps.
+
 The minimum cost path for a swallow to fly, on this graph is: 0 -> 3, 3 -> 2, and 2 -> 4, with a minimum cost of 12. 
 
 ## Running the Program
